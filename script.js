@@ -1,45 +1,40 @@
-const chatContainer = document.getElementById('chat-container');
-
-// Conectar a Twitch IRC a través de WebSocket
-const ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
+const ws = new WebSocket('wss://pubsub-edge.twitch.tv');
 
 // Cuando la conexión se abre
 ws.onopen = function () {
-    ws.send('PASS oauth:wb6p26z2kmpb4207zsscebjbqnfyhw'); // Reemplaza con tu token OAuth real
-    ws.send('NICK Eren0411os'); // Reemplaza con tu nombre de usuario
-    ws.send('JOIN #eren0411os'); // Reemplaza con el nombre de tu canal (incluyendo el #)
+    // Enviar el mensaje para escuchar el canal (reemplaza <token> y <user_id> con tus valores)
+    const message = {
+        type: "LISTEN",
+        nonce: "44h1k13746815ab1r2",
+        data: {
+            topics: [`chat_moderator_actions.Eren0411os.eren0411os`], // Cambia user_id y channel_id
+            auth_token: "h0z2o4yib6iyqzcdf88fv5yufkzphg"
+        }
+    };
+    
+    ws.send(JSON.stringify(message));
+    console.log("Conexión establecida y escuchando mensajes de chat...");
 };
 
-// Escuchar mensajes del WebSocket
-
+// Recibir mensajes de Twitch PubSub
 ws.onmessage = function (event) {
-    const message = event.data.trim();
-    console.log("Mensaje recibido: ", message);
+    const response = JSON.parse(event.data);
 
-    // Solo procesar mensajes que contienen PRIVMSG (indican mensajes del chat)
-    if (message.includes('PRIVMSG')) {
-        const messageParts = message.split(' '); // Dividir por espacio
-        const username = messageParts[1].split('!')[0]; // Obtener el nombre del usuario
-        const chatMessage = message.substring(message.indexOf('PRIVMSG') + 1).split(':')[1]; // Obtener el contenido del mensaje
-
-        const bubble = document.createElement('div');
-        bubble.classList.add('bubble');
-        bubble.innerHTML = `<strong>${username}:</strong> ${chatMessage}`;
-        chatContainer.appendChild(bubble);
-
-        // Desplazar el contenedor de chat hacia abajo
-        chatContainer.scrollTop = chatContainer.scrollHeight;
+    if (response.type === "MESSAGE") {
+        const messageData = response.data.message;
+        console.log("Mensaje recibido en el canal:", messageData);
+        
+        // Aquí puedes procesar y mostrar los mensajes en tu widget
     }
 };
 
-
-// Manejar errores
+// Manejar errores de WebSocket
 ws.onerror = function (error) {
-    console.error("Error de WebSocket: ", error);
+    console.error("Error en la conexión WebSocket:", error);
 };
 
-// Manejar cierre de conexión
+// Manejar el cierre de la conexión
 ws.onclose = function () {
-    console.log("Conexión cerrada");
+    console.log("Conexión WebSocket cerrada.");
 };
 
