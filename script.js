@@ -1,4 +1,4 @@
-const chatContainer = document.getElementById('chat');
+const chatContainer = document.getElementById('chat-container');
 
 // Conectar a Twitch IRC a través de WebSocket
 const ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
