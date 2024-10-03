@@ -11,14 +11,16 @@ ws.onopen = function () {
 };
 
 // Escuchar mensajes del WebSocket
+
 ws.onmessage = function (event) {
     const message = event.data.trim();
     console.log("Mensaje recibido: ", message);
 
-    // Solo procesar los mensajes que contienen PRIVMSG
+    // Solo procesar mensajes que contienen PRIVMSG (indican mensajes del chat)
     if (message.includes('PRIVMSG')) {
-        const username = message.split('!')[0].substring(1);
-        const chatMessage = message.split('PRIVMSG')[1].split(':')[1];
+        const messageParts = message.split(' '); // Dividir por espacio
+        const username = messageParts[1].split('!')[0]; // Obtener el nombre del usuario
+        const chatMessage = message.substring(message.indexOf('PRIVMSG') + 1).split(':')[1]; // Obtener el contenido del mensaje
 
         const bubble = document.createElement('div');
         bubble.classList.add('bubble');
@@ -29,6 +31,7 @@ ws.onmessage = function (event) {
         chatContainer.scrollTop = chatContainer.scrollHeight;
     }
 };
+
 
 // Manejar errores
 ws.onerror = function (error) {
