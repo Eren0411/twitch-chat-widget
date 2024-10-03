@@ -7,7 +7,7 @@ const ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
 ws.onopen = function () {
     // Autenticación básica para Twitch
     ws.send('PASS oauth:mtt827eirkwdlfshpvvmb8923g3ofq'); // Reemplaza con tu token OAuth
-    ws.send('eren0411os'); // Reemplaza con tu nombre de usuario
+    ws.send('Eren0411os'); // Reemplaza con tu nombre de usuario
     ws.send('JOIN eren0411os'); // Reemplaza con tu canal (sin la #)
 };
 
